@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     default: 'user'
   },
   phone: String,
-  therapistId: String,
+  therapistId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null},
   createdAt: {
     type: Date,
     default: Date.now
@@ -41,6 +41,10 @@ userSchema.methods.matchPassword = function(enteredPassword) {
   return bcrypt.compareSync(enteredPassword, this.password);
 };
 
-// TODO: Add a method to sanitize user data before sending to client
+userSchema.methods.sanitize = () => {
+  const user = this;
+  delete user.password;
+  return user;
+};
 
 module.exports = mongoose.model('User', userSchema);

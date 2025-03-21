@@ -1,28 +1,25 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const mongodb = require('./Config/db');
+const dotenv = require('dotenv');
 const cors = require('cors');
+const errorCatcher = require('./middlewares/errorMiddleware');
 const userRoutes = require('./routes/userRoutes');
 const emotionRoutes = require('./routes/emotionRoutes');
+const reminderRoutes = require('./routes/reminderRoutes');
 
+dotenv.config();
+
+mongodb.connect();
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Database connection
-// TODO: Move this to a separate config file
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/emotionaltracker';
-mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
-
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/emotions', emotionRoutes);
+app.use('/api/reminders', reminderRoutes);
 
 // Unprotected test route
 app.get('/api/status', (req, res) => {
@@ -35,7 +32,11 @@ app.use((req, res) => {
 });
 
 // Error handling middleware
-// TODO: Implement proper error handling middleware
+app.use(errorCatcher);
 
-const PORT = process.env.PORT ||5050;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 5050;
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+module.exports = app;

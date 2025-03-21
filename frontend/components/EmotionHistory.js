@@ -79,8 +79,8 @@ const EmotionHistory = () => {
   const { emotions, loading, getEmotions } = useContext(EmotionContext);
   
   // Fetch emotions on component mount
-  useEffect(() => {
-    getEmotions();
+  useEffect( () => {
+  getEmotions();
   }, []);
   
   const translateEmotion = (emotion) => {

@@ -39,7 +39,7 @@ export const EmotionProvider = ({ children }) => {
   };
 
   // Add a new emotion entry (frontend only, not connected to backend)
-  const addEmotion = (emotionData) => {
+  const addEmotion = async (emotionData) => {
     // This will be lost on page refresh
     const newEmotion = {
       id: Date.now().toString(),
@@ -49,7 +49,14 @@ export const EmotionProvider = ({ children }) => {
     
     setEmotions(prev => [newEmotion, ...prev]);
     
-    // TODO: Connect to backend API
+    const token = Cookie.get('token');
+    
+    const res = await axios.post(`${API_URL}/emotions`, newEmotion,{
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    })
+    console.log(res)
   };
 
   const shareWithTherapist = async (emotionIds) => {

@@ -3,13 +3,19 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import Layout from '../components/Layout';
 import { AuthContext } from '../context/AuthContext';
-import EmotionTracker from '../components/EmotionTracker';
-import EmotionHistory from '../components/EmotionHistory';
+import ReminderTracker from '../components/ReminderTracker';
+import ReminderHistory from '../components/ReminderHistory';
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { GoHistory } from "react-icons/go";
 import { EmotionContext } from '../context/EmotionContext';
+import { LuClock4 } from "react-icons/lu";
+
 //icons
-const AddEmotionIcon = styled(IoIosAddCircleOutline)`
+const ClockIcon = styled(LuClock4)`
+  font-size: 1rem;
+  margin-right: 3px;
+  `;
+  const AddEmotionIcon = styled(IoIosAddCircleOutline)`
   font-size: 1.2rem;
   margin-right: 5px;
   color: #1F5AAE; 
@@ -91,26 +97,25 @@ export default function Emotions() {
     <Layout title="Emociones - Terapia Emocional">
       <EmotionsContainer>
       <HeaderGroup>
-        <Title>Seguimiento Emocional</Title>
-        <EmotionText>Registra y analiza tus emociones para mejorar tu bienestar</EmotionText>
+        <Title>Recordatorios</Title>
       </HeaderGroup>
         <ButtonGroup>
           <ActionButton 
             active={view === 'tracker'} 
             onClick={() => setView('tracker')}
           >
-            <AddEmotionIcon/> Registrar Emoción
+            <ClockIcon/> Registrar Recordatorio
           </ActionButton>
           <ActionButton 
             active={view === 'history'} 
             onClick={() => setView('history')}
           >
-            <HistoryIcon/> Historial
+            <ClockIcon/> Recordatorios
           </ActionButton>
         </ButtonGroup>
 
-        {view === 'tracker' && <EmotionTracker />}
-        {view === 'history' && <EmotionHistory />}
+        {view === 'tracker' && <ReminderTracker />}
+{view === 'history' && <ReminderHistory />}
       </EmotionsContainer>
     </Layout>
   );

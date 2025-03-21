@@ -12,7 +12,7 @@ const TrackerContainer = styled.div`
 
 const Title = styled.h2`
   margin-top: 0;
-  color: #2c3e50;
+  color: #1F5AAE;
 `;
 
 const Form = styled.form`
@@ -65,7 +65,7 @@ const TextArea = styled.textarea`
 `;
 
 const Button = styled.button`
-  background-color: #3CABDB;
+  background-color: #1F5AAE;
   color: white;
   border: none;
   border-radius: 4px;
@@ -75,7 +75,7 @@ const Button = styled.button`
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: #2980b9;
+    background-color: #1F5AAE;
   }
 `;
 

@@ -2,20 +2,22 @@ const Emotion = require('../models/emotionModel');
 
 // Get all emotions for a user
 const getEmotions = async (req, res) => {
-  const emotions = await Emotion.find({ user: req.user._id });
-  res.json(emotions);
+  await Emotion.find({ user: req.user._id })
+    .then(emotions => res.json(emotions))
+    .catch(() => res.status(500).json({ message: 'Error retrieving emotions' }));
 };
 
 // Get single emotion by ID
 const getEmotionById = async (req, res) => {
-  const emotion = await Emotion.findById(req.params.id);
-  
-  if (!emotion) {
-    res.status(404).json({ message: 'Emotion not found' });
-    return;
-  }
-
-  res.json(emotion);
+  await Emotion.findById(req.params.id)
+    .then(emotion => {
+      if (!emotion) {
+        res.status(404).json({ message: 'Emotion not found' });
+        return;
+      }
+      res.json(emotion)
+    })
+    .catch(() => res.status(500).json({ message: 'Error retrieving emotion' }));
 };
 
 // Create a new emotion entry
@@ -27,7 +29,7 @@ const createEmotion = async (req, res) => {
     emotion,
     intensity,
     notes
-  });
+  }).catch(() => res.status(500).json({ message: 'Error creating emotion' }));
 
   res.status(201).json(newEmotion);
 };
@@ -36,13 +38,14 @@ const createEmotion = async (req, res) => {
 const updateEmotion = async (req, res) => {
   const { emotion, intensity, notes } = req.body;
 
-  const emotionRecord = await Emotion.findById(req.params.id);
+  const emotionRecord = await Emotion.findById(req.params.id)
+    .catch(() => res.status(500).json({ message: 'Error retrieving emotion' }));
 
   if (!emotionRecord) {
     res.status(404).json({ message: 'Emotion not found' });
     return;
   }
-  
+
   emotionRecord.emotion = emotion || emotionRecord.emotion;
   emotionRecord.intensity = intensity || emotionRecord.intensity;
   emotionRecord.notes = notes || emotionRecord.notes;
@@ -51,32 +54,66 @@ const updateEmotion = async (req, res) => {
   res.json(updatedEmotion);
 };
 
-const getEmotionSummary = async (userId) => {
-  // Inefficient query
-  const emotions = await Emotion.find({ user: userId });
-  
-  // TODO: Implement aggregation for better performance
-  const summary = {
-    count: emotions.length,
-    averageIntensity: 0,
-    emotionCounts: {}
-  };
-  
-  emotions.forEach(e => {
-    summary.averageIntensity += e.intensity;
-    summary.emotionCounts[e.emotion] = (summary.emotionCounts[e.emotion] || 0) + 1;
-  });
-  
-  if (emotions.length > 0) {
-    summary.averageIntensity /= emotions.length;
+const getEmotionSummary = async (req) => {
+  const summary = await Emotion.aggregate([
+    { $match: { user: req.user._id } },
+    {
+      $group: {
+        _id: '$emotion',
+        count: { $sum: 1 },
+        totalIntensity: { $sum: '$intensity' }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        emotionCounts: { $push: { emotion: '$_id', count: '$count' } },
+        totalEmotions: { $sum: '$count' },
+        totalIntensity: { $sum: '$totalIntensity' }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        count: '$totalEmotions',
+        averageIntensity: {
+          $cond: [
+            { $eq: ['$totalEmotions', 0] },
+            0,
+            { $divide: ['$totalIntensity', '$totalEmotions'] }
+          ]
+        },
+        emotionCounts: 1
+      }
+    }
+  ]).catch(() => res.status(500).json({ message: 'Error retrieving emotions' }));
+
+  // console.log((JSON.stringify(summary)));
+  return res.status(200).json(summary);
+};
+
+// TODO: Implement therapist sharing
+const shareEmotions = async (req, res) => {
+  const { therapistId } = req.user;
+  const therapist = await User.findById(therapistId)
+    .catch(() => res.status(500).json({ message: 'Error retrieving therapist' }));
+  console.log(therapist);
+
+  if (therapist === null || !therapist) {
+    res.status(404).json({ message: 'Therapist not found' });
+    return;
   }
-  
-  return summary;
+
+  const emotions = await Emotion.find({ user: req.user._id })
+    .catch(() => res.status(500).json({ message: 'Error retrieving emotions' }));
+  res.json(emotions);
 };
 
 module.exports = {
   getEmotions,
   getEmotionById,
   createEmotion,
-  updateEmotion
+  updateEmotion,
+  getEmotionSummary,
+  shareEmotions
 };
