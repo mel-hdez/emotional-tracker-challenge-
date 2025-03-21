@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerUser, loginUser, getUserProfile } = require('../controllers/userController');
+const { registerUser, loginUser, getUserProfile, updateUserProfile, resetPassword } = require('../controllers/userController');
 const { protect } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
@@ -10,7 +10,7 @@ router.post('/login', loginUser);
 
 // Protected routes
 router.get('/profile', protect, getUserProfile);
-
-// TODO: Add routes for updating user profile and resetting password
+router.put('/profile', protect, updateUserProfile);
+router.put('/reset-password', protect, resetPassword);
 
 module.exports = router;

@@ -26,7 +26,7 @@ const registerUser = async (req, res) => {
     name,
     email,
     password
-  });
+  }).catch(() => res.status(500).json({ message: 'Error creating user' }));
 
   if (user) {
     res.status(201).json({
@@ -44,7 +44,8 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email })
+    .catch(() => res.status(500).json({ message: 'Error retrieving user' }));
 
   if (user && user.matchPassword(password)) {
     res.json({
@@ -69,11 +70,54 @@ const getUserProfile = async (req, res) => {
   });
 };
 
-// TODO: Implement user update endpoint
-// TODO: Implement password reset endpoint
+const updateUserProfile = async (req, res) => {
+  const { name, email } = req.body;
+
+  const user = await User.findById(req.user._id)
+    .catch(() => res.status(500).json({ message: 'Error retrieving user' }));
+
+  if (!user) {
+    res.status(404).json({ message: 'User not found' });
+    return;
+  }
+
+  user.name = name || user.name;
+  user.email = email || user.email;
+
+  await user.save()
+    .catch(() => res.status(500).json({ message: 'Error updating user' }));
+
+  res.json({
+    _id: user._id,
+    name: user.name,
+    email: user.email
+  });
+}
+
+const resetPassword = async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email })
+    .catch(() => res.status(500).json({ message: 'Error retrieving user' }));
+
+  if (!user) {
+    res.status(404).json({ message: 'User not found' });
+    return;
+  }
+
+  user.password = password;
+  await user.save()
+    .catch(() => res.status(500).json({ message: 'Error updating user' }));
+
+  res.json({
+    message: 'Password reset successfully'
+  });
+}
 
 module.exports = {
   registerUser,
   loginUser,
-  getUserProfile
+  getUserProfile,
+  updateUserProfile,
+  resetPassword
 };

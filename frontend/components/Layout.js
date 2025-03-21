@@ -8,6 +8,7 @@ const Main = styled.main`
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
+  background: #F0F6FF;
 `;
 
 const Layout = ({ title, description, children }) => {

@@ -3,7 +3,26 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import Layout from '../components/Layout';
 import { AuthContext } from '../context/AuthContext';
+import { MdDateRange } from "react-icons/md";
+import { GoGraph } from "react-icons/go";
+import { LuMessageCircle } from "react-icons/lu";
 
+//icons
+const DateIcon = styled(MdDateRange)`
+  font-size: 1.3rem;
+  margin-right: 3px;
+  color: #1F5AAE;
+  `;
+const EmotionIcon = styled(GoGraph)`
+  font-size: 1.3rem;
+  margin-right: 3px;
+  color: #1F5AAE;
+  `;
+  const MessageIcon = styled(LuMessageCircle)`
+  font-size: 1.3rem;
+  margin-right: 3px;
+  color: #1F5AAE;
+  `;
 const Hero = styled.div`
   text-align: center;
   padding: 4rem 1rem;
@@ -31,9 +50,9 @@ const ButtonGroup = styled.div`
 const Button = styled.a`
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  background-color: ${props => props.primary ? '#3498db' : 'transparent'};
-  color: ${props => props.primary ? 'white' : '#3498db'};
-  border: 2px solid #3498db;
+  background-color: ${props => props.primary ? '#1F5AAE' : 'transparent'};
+  color: ${props => props.primary ? 'white' : '#1F5AAE'};
+  border: 2px solid #1F5AAE;
   border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
@@ -60,7 +79,19 @@ const FeatureCard = styled.div`
 `;
 
 const FeatureTitle = styled.h3`
-  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #1F5AAE;
+`;
+
+const Divider = styled.div`
+  width: calc(100% + 3rem);
+  margin: 0.75rem -1.5rem; 
+  border: none;
+  border-top: 1px solid #1F5AAE;
+  
 `;
 
 const FeatureDescription = styled.p`
@@ -102,21 +133,24 @@ export default function Home() {
       
       <Features>
         <FeatureCard>
-          <FeatureTitle>Seguimiento Diario</FeatureTitle>
+          <FeatureTitle><DateIcon/>Seguimiento Diario</FeatureTitle>
+          <Divider />
           <FeatureDescription>
             Registra tus emociones y su intensidad para hacer un seguimiento de tu bienestar mental.
           </FeatureDescription>
         </FeatureCard>
         
         <FeatureCard>
-          <FeatureTitle>Identifica Patrones</FeatureTitle>
+          <FeatureTitle><EmotionIcon/>Identifica Patrones</FeatureTitle>
+          <Divider />
           <FeatureDescription>
             Descubre patrones en tu salud emocional y comprende los desencadenantes.
           </FeatureDescription>
         </FeatureCard>
         
         <FeatureCard>
-          <FeatureTitle>Comparte con tu Terapeuta</FeatureTitle>
+          <FeatureTitle><MessageIcon/>Comparte con tu Terapeuta</FeatureTitle>
+          <Divider />
           <FeatureDescription>
             Comparte fácilmente tu diario emocional con tu terapeuta para mejorar las sesiones.
           </FeatureDescription>

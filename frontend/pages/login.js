@@ -15,7 +15,7 @@ const FormContainer = styled.div`
 
 const Title = styled.h1`
   text-align: center;
-  color: #2c3e50;
+  color: #1F5AAE;
   margin-top: 0;
 `;
 
@@ -44,7 +44,7 @@ const Input = styled.input`
 `;
 
 const Button = styled.button`
-  background-color: #3CABDB;
+  background-color: #1F5AAE;
   color: white;
   border: none;
   border-radius: 4px;
@@ -54,7 +54,7 @@ const Button = styled.button`
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: #2980b9;
+    background-color: #1F5AAE;
   }
 `;
 
@@ -63,7 +63,7 @@ const LinkText = styled.p`
   margin-top: 1rem;
   
   a {
-    color: #3498db;
+    color: #1F5AAE;
     text-decoration: underline;
   }
 `;

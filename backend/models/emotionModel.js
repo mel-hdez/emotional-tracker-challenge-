@@ -25,14 +25,12 @@ const emotionSchema = new mongoose.Schema({
   triggers: [String],
   activities: [String]
 });
-// TODO: Define indexes for performance
 
-function getEmotionStats(userId) {
-  // TODO: Implement aggregation for emotion statistics
-  return this.aggregate([
+emotionSchema.index({ user: 1 });
+
+  emotionSchema.statics.getEmotionStatistics = () => this.aggregate([
     { $match: { user: mongoose.Types.ObjectId(userId) } },
     { $group: { _id: '$emotion', count: { $sum: 1 } } }
   ]);
-}
 
 module.exports = mongoose.model('Emotion', emotionSchema);
